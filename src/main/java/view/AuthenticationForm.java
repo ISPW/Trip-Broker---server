@@ -24,6 +24,7 @@ import model.Administrator;
 import model.Designer;
 import model.Employee;
 import model.Scout;
+import org.controlsfx.control.Notifications;
 
 
 public class AuthenticationForm extends Application {
@@ -52,14 +53,14 @@ public class AuthenticationForm extends Application {
             String auth = user.getText();
             Employee emp;
 
-            if ("gianni".equals(auth)) emp = new Employee(new Administrator());
-            else if ("roberto".equals(auth)) emp = new Employee(new Scout());
-            else emp = new Employee(new Designer());
+            if ("gianni".equals(auth)) emp = new Employee(auth, new Administrator());
+            else if ("roberto".equals(auth)) emp = new Employee(auth, new Scout());
+            else emp = new Employee(auth, new Designer());
 
             primaryStage.close();
 
             try {
-                new TBApplication().start(emp.generateState());
+                new TBApplication(emp).start();
                 AuthenticationForm.this.stop();
             }
             catch (Exception e) { e.printStackTrace(); }
