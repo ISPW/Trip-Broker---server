@@ -1,56 +1,72 @@
 package view;
 
+import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
+import model.Administrator;
+import model.Designer;
+import model.Employee;
+import model.Scout;
 
 
 public class AuthenticationForm extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        GridPane gridPane = new GridPane();
-        TextField userField = new TextField();
-        PasswordField passField = new PasswordField();
-        Text userText = new Text();
-        Text passText = new Text();
-        Button loginButton = new Button();
+    public void start(final Stage primaryStage) throws Exception {
 
-        loginButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent event) {
-                System.out.println("Click di prova!");
-            }
-        });
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml_example.fxml"));
 
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setHgap(25);
-        gridPane.setVgap(25);
-        gridPane.setPadding(new Insets(25, 25, 25, 25));
-
-        userField.setPromptText("Insert your username");
-        passField.setPromptText("Insert your password");
-        userText.setText("User:");
-        passText.setText("Password:");
-        loginButton.setText("Login");
-
-        gridPane.add(userField, 2, 0, 2, 1);
-        gridPane.add(userText, 0, 0, 2, 1);
-        gridPane.add(passField, 2, 1, 2, 1);
-        gridPane.add(passText, 0, 1, 2, 1);
-        gridPane.add(loginButton, 2, 2, 2, 1);
         primaryStage.setTitle("Login");
         primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(gridPane, 300, 275));
+        primaryStage.setScene(new Scene(root));
+        primaryStage.sizeToScene();
         primaryStage.show();
+
+        TextField user = (TextField) root.lookup("#txt_user");
+        user.setPromptText("Insert your username");
+
+        TextField password = (TextField) root.lookup("#txt_pass");
+        password.setPromptText("Insert your password");
+
+        Button exit = (Button) root.lookup("#exit_btn");
+        Button confirm = (Button) root.lookup("#confirm_btn");
+
+        confirm.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+
+            String auth = user.getText();
+            Employee emp;
+
+            if ("gianni".equals(auth)) emp = new Employee(new Administrator());
+            else if ("roberto".equals(auth)) emp = new Employee(new Scout());
+            else emp = new Employee(new Designer());
+
+            primaryStage.close();
+
+            try {
+                new TBApplication().start(emp.generateState());
+                AuthenticationForm.this.stop();
+            }
+            catch (Exception e) { e.printStackTrace(); }
+
+        });
+
+        exit.setOnAction(event -> primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
     }
 }
