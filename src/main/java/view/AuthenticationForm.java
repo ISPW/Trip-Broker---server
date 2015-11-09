@@ -45,7 +45,6 @@ public class AuthenticationForm extends Application {
         TextField password = (TextField) root.lookup("#txt_pass");
         password.setPromptText("Insert your password");
 
-        Button exit = (Button) root.lookup("#exit_btn");
         Button confirm = (Button) root.lookup("#confirm_btn");
 
         confirm.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
@@ -64,9 +63,6 @@ public class AuthenticationForm extends Application {
                 AuthenticationForm.this.stop();
             }
             catch (Exception e) { e.printStackTrace(); }
-
         });
-
-        exit.setOnAction(event -> primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
     }
 }
